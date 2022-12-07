@@ -87,7 +87,8 @@ public class ShowWeatherActivity extends AppCompatActivity {
      * @param inputCityName - the city name that asks for the weather info
      */
     private void getWeatherInfo(String inputCityName) throws JSONException, IOException {
-        String url = "http://api.weatherapi.com/v1/current.json?key=71de436da99044dda5014908222111&q=" + inputCityName + "&aqi=no";
+        String weatherKey = getResources().getString(R.string.WEATHER_API_KEY);
+        String url = "http://api.weatherapi.com/v1/current.json?key=" + weatherKey + "&q=" + inputCityName + "&aqi=no";
         city_name.setText(inputCityName);
         RequestQueue requestQueue = Volley.newRequestQueue(ShowWeatherActivity.this);
 

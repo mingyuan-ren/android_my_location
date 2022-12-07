@@ -7,14 +7,20 @@ android {
     namespace 'com.example.mylocation'
     compileSdk 32
 
+    def Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
     defaultConfig {
         applicationId "com.example.mylocation"
-        minSdk 21
+        minSdk 29
         targetSdk 32
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        resValue "string", "MAPS_API_KEY", properties.getProperty("MAPS_API_KEY")
+        resValue "string", "WEATHER_API_KEY", properties.getProperty("WEATHER_API_KEY")
     }
 
     buildTypes {

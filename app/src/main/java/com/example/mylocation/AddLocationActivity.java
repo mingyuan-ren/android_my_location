@@ -57,7 +57,7 @@ public class AddLocationActivity extends AppCompatActivity implements View.OnCli
                 .build(this);
 
         if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), getResources().getString(R.string.API_KEY));
+            Places.initialize(getApplicationContext(), getResources().getString(R.string.MAPS_API_KEY));
         }
         search_location_text.setOnClickListener(new View.OnClickListener(){
             @Override
