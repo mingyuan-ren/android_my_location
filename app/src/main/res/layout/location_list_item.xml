@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:id="@+id/parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationName"
+        android:text="Location Name"
+        android:textSize="18sp"/>
+
+    <Button
+        android:id="@+id/locationWeather"
+        android:layout_width="98dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="120dp"
+        android:gravity="center_vertical"
+        android:text="Weather"
+        android:textSize="12sp"
+        android:textAlignment="center"/>
+
+    <Button
+        android:id="@+id/locationMap"
+        android:layout_width="65dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="44dp"
+        android:gravity="center_vertical"
+        android:text="Map"
+        android:textSize="12sp"
+        android:textAlignment="center"/>
+
+    <ImageButton
+        android:id="@+id/locationImageRemove"
+        android:layout_width="31dp"
+        android:layout_height="29dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="343dp"
+        android:layout_marginTop="9dp"
+        android:layout_toEndOf="@id/parent"
+        android:gravity="center_vertical"
+        app:srcCompat="@mipmap/ic_remove" />
+
+
+</RelativeLayout>

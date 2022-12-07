@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">My Location</string>
+    <string name="please_enter_your_password">Please enter your password</string>
+    <string name="hello_and_welcome">Create Account</string>
+    <string name="please_enter_your_username">Please enter your username</string>
+    <string name="confirm_sign_up">Confirm Sign Up</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">SIGN IN</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="register">Sign Up</string>
+    <string name="please_enter_the_password_again">Re enter password again</string>
+    <string name="city_application">MY LOCATION</string>
+    <string name="confirm_register">Confirm</string>
+    <string name="title_activity_show_map">ShowMapActivity</string>
+    <string name="title_activity_reset_password">ResetPasswordActivity</string>
+    <!-- Strings used for fragments for navigation -->
+
+    <string name="reset_password">Reset password</string>
+    <string name="confirm_password">confirm password</string>
+    <string name="temperature">temperature</string>
+    <string name="humidity">humidity</string>
+    <string name="wind">wind</string>
+    <string name="weather_condition">Weather Condition</string>
+    <string name="city">City</string>
+    <string name="date_time">Date/time</string>
+    <string name="background">Background</string>
+    <string name="weather_condition_image">Weather Condition Image</string>
+
+</resources>
