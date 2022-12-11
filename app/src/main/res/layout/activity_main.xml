@@ -17,7 +17,7 @@
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="List of Locations" />
+            android:text="Your Locations" />
 
         <TextView
             android:id="@+id/textView5"
@@ -37,12 +37,32 @@
             android:layout_width="match_parent"
             android:layout_height="30dp" />
 
-        <Button
-            android:id="@+id/buttonAddLocation"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add a location" />
+            android:layout_height="50dp"
+            android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/buttonAddLocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Add location"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="20dp"/>
+
+            <Button
+                android:id="@+id/buttonSaveLocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Save location"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="10dp"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

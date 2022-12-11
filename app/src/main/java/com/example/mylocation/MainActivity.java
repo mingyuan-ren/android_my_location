@@ -24,6 +24,7 @@ import com.example.mylocation.databinding.ActivityMainBinding;
 import com.example.mylocation.model.UserSelectedLocation;
 
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -36,18 +37,12 @@ public class MainActivity extends AppCompatActivity  {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
-    //activityResultLauncher is for resuming MainActivity upon other activities such as AddLocationActivity
     private ActivityResultLauncher<Intent> activityResultLauncher;
-    //add location and logout buttons
     private Button buttonNew;
-    //Recycler view for showing location list of the user
+    private Button buttonSave;
     private RecyclerView locationRecView;
-    //user name is the logged-in user on this MainActivity, to decide what user name and location list to show on Main page
     private String userName;
-
     private ArrayList<UserSelectedLocation> locationsRec = new ArrayList<>();
-
-
     private final UserDBHelper dbHelper;
 
     /**
@@ -67,44 +62,15 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //initialize "add location" button, "location list" recycler view, and the user
+        //initialize "add location" button, "location list" recycler view
+        // and the userName which passed in by the UserLoginActivity
         buttonNew = findViewById(R.id.buttonAddLocation);
+        buttonSave = findViewById(R.id.buttonSaveLocation);
+        userName = getIntent().getStringExtra("username");
+        this.setTitle("My Locations - " + userName);//set the user name displayed on top of the screen
+
         locationRecView = findViewById(R.id.locationRecView);
-
-        // In our finished version, the MainActivity will be started by "LoginActivity"
-        // (Now in my version, by fake login activity),
-        // which should pass MainActivity the user name or user id
-        // (Now in my version, the user name is passed in)
-        // then MainActivity can get the user selected locations from the database.
-        // And show user name, user selected locations on the screen correctly.
-        // Here I am processing the Intent payload that contains the user name.
-        userName = getIntent().getStringExtra("username").toString();
-
-        //set the user name displayed on top of the screen
-        this.setTitle("My Locations - " + userName);
-        //set the top of screen after login in
-        //set up an arraylist to store the user selected locations.
-        //UserSelectedLocation is a customized class for user selected locations.
-
-
-        //connect to the database and fetch location list of the current user
-
-        //find out the string of the locations stored for the user,
-        //multiple locations are stored with split \t
-        Cursor cursor = dbHelper.getLocations(userName);
-        cursor.moveToFirst();
-        String locationString = cursor.getString(0);
-
-        //split the string into string array, and add the locations to the ArrayList
-        // for later showing in recycler view
-        if(locationString.length()>0) {
-            String[] locationTemp = locationString.split("\t");
-            for (String s : locationTemp) {
-                locationsRec.add(new UserSelectedLocation(s));
-            }
-        }
-
-        //set the adapter of recyclerview so that the list of locations can be shown correctly
+        initLocationData();//initialize location data for locationsRec
         LocationRecViewAdapter adapter = new LocationRecViewAdapter(this);
         adapter.setUserSelectedLocations(locationsRec);
         locationRecView.setAdapter(adapter);
@@ -140,29 +106,64 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
+        //save the current location list
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StringBuilder userLocationsToSaveBuilder = new StringBuilder("");
+                for(UserSelectedLocation l: locationsRec) {
+                    userLocationsToSaveBuilder.append(l.serialize()).append("\t");
+                }
+                dbHelper.updateUserLocation(userName,userLocationsToSaveBuilder.toString());
+                Toast.makeText(getBaseContext(), "The location list is saved!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
     }
 
+    /**
+     * Connect to the database and initialize the user location data.
+     */
+    private void initLocationData() {
+        //connect to the database and fetch location list of the current user
+        //find out the string of the locations stored for the user,
+        //multiple locations are stored with split \t
+        Cursor cursor = dbHelper.getLocations(userName);
+        cursor.moveToFirst();
+        String locationString = cursor.getString(0);
+
+        //split the string into string array, and add the locations to the ArrayList
+        // for later showing in recycler view
+        if(locationString.length()>0) {
+            String[] locationTemp = locationString.split("\t");
+            for (String s : locationTemp) {
+                locationsRec.add(new UserSelectedLocation(s));
+            }
+        }
+    }
+
+    /**
+     * Inflate the menu; this adds items to the action bar if it is present.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_on_main, menu);
         return true;
     }
 
+    /**
+     * save data when the users log out
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //Logout from Main page. will jump to login page (Now jumping to fake login page)
-        // And save the location list to the database when logging out
+        //Logout from Main page. will jump to login page
+        //And save the location list to the database when logging out
         int id = item.getItemId();
         //save current location list to the database, convert location names to a string, split by \t
         if (id == R.id.logoutItem) {
-            StringBuilder userLocationsToSaveBuilder = new StringBuilder("");
-            for(UserSelectedLocation l: locationsRec) {
-                userLocationsToSaveBuilder.append(l.serialize()).append("\t");
-            }
-            dbHelper.updateUserLocation(userName,userLocationsToSaveBuilder.toString());
-            //jump to flogin page
+            //TODO: notify the user if she has not saved the list
+            //jump to user login page
             Intent intent = new Intent(this, UserLogin.class);
             startActivity(intent);
             finish();
