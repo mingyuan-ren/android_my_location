@@ -23,7 +23,6 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
     private EditText username_text;
     private EditText password_text;
     private EditText password_text_2;
-    private Button select_ui_theme;
     private final UserDBHelper dbHelper;
 
     /**
@@ -48,14 +47,6 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
         username_text = (EditText) findViewById(R.id.username_text);
         password_text = (EditText) findViewById(R.id.password_text);
         password_text_2 = (EditText) findViewById(R.id.password_text_2);
-
-        //Button username_clear = (Button) findViewById(R.id.username_clear);
-        //Button password_clear = (Button) findViewById(R.id.password_clear);
-        select_ui_theme = (Button) findViewById(R.id.select_ui_theme);
-
-        //username_clear.setOnClickListener(this);
-        //password_clear.setOnClickListener(this);
-        select_ui_theme.setOnClickListener(this);
     }
 
     /**

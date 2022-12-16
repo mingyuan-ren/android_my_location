@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -88,7 +89,7 @@ public class ShowWeatherActivity extends AppCompatActivity {
      */
     private void getWeatherInfo(String inputCityName) throws JSONException, IOException {
         String weatherKey = getResources().getString(R.string.WEATHER_API_KEY);
-        String url = "http://api.weatherapi.com/v1/current.json?key=" + weatherKey + "&q=" + inputCityName + "&aqi=no";
+        String url = "https://api.weatherapi.com/v1/current.json?key=" + weatherKey + "&q=" + inputCityName + "&aqi=no";
         city_name.setText(inputCityName);
         RequestQueue requestQueue = Volley.newRequestQueue(ShowWeatherActivity.this);
 
@@ -142,19 +143,22 @@ public class ShowWeatherActivity extends AppCompatActivity {
                             cardViewMain.setVisibility(View.VISIBLE);
                             cardViewSecondary.setVisibility(View.VISIBLE);
 
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 });
+                Log.e("onResponse",""+response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(ShowWeatherActivity.this, "Error while loading weather details, please try again", Toast.LENGTH_SHORT).show();
+                Log.e("onErrorResponse", "" + error);
             }
         });
+        Log.e("jsObjRequest",  "" + weatherInfo);
+
         requestQueue.add(weatherInfo);
     }
 

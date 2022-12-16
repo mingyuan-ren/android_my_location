@@ -21,6 +21,9 @@ android {
 
         resValue "string", "MAPS_API_KEY", properties.getProperty("MAPS_API_KEY")
         resValue "string", "WEATHER_API_KEY", properties.getProperty("WEATHER_API_KEY")
+        resValue "string", "REMOTE_HOST", properties.getProperty("AWS_RDS_POSTGRES_HOST")
+        resValue "string", "REMOTE_USERNAME", properties.getProperty("DATABASE_USERNAME")
+        resValue "string", "REMOTE_PASSWORD", properties.getProperty("DATABASE_PASSWORD")
     }
 
     buildTypes {
@@ -88,4 +91,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test:rules:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.0'
+
+    //connecting aws rds postgres sql database
+    implementation 'org.postgresql:postgresql:42.2.5'
+
 }
