@@ -1,5 +1,6 @@
 package com.example.mylocation;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -14,14 +15,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mylocation.database.AwsDatabaseQuery;
+import com.example.mylocation.database.AwsDatabaseUpdate;
 import com.example.mylocation.database.UserDBHelper;
 import com.example.mylocation.databinding.ActivityMainBinding;
 import com.example.mylocation.model.UserSelectedLocation;
+import com.example.mylocation.utils.AsyncResponse;
 
 import android.widget.Button;
 import android.widget.Toast;
@@ -32,7 +35,7 @@ import java.util.Locale;
 /**
  * Main Activity to display user selected locations, add new locations and sign out
  */
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -44,6 +47,9 @@ public class MainActivity extends AppCompatActivity  {
     private String userName;
     private ArrayList<UserSelectedLocation> locationsRec = new ArrayList<>();
     private final UserDBHelper dbHelper;
+    private LocationRecViewAdapter adapter = new LocationRecViewAdapter(this);
+
+    private AwsDatabaseQuery adb;
 
     /**
      * Default constructor to initialize the database helper
@@ -70,11 +76,8 @@ public class MainActivity extends AppCompatActivity  {
         this.setTitle("My Locations - " + userName);//set the user name displayed on top of the screen
 
         locationRecView = findViewById(R.id.locationRecView);
-        initLocationData();//initialize location data for locationsRec
-        LocationRecViewAdapter adapter = new LocationRecViewAdapter(this);
-        adapter.setUserSelectedLocations(locationsRec);
-        locationRecView.setAdapter(adapter);
-        locationRecView.setLayoutManager(new LinearLayoutManager(this));
+        //initLocationData();//initialize location data for locationsRec
+        initLocationDataFromAws();//initialize location data for locationsRec, data comes from AWS database
 
         //interactions with AddLocationActivity
         //set up button click listener, to receive the message(intent) sent back from AddLocationActivity
@@ -115,11 +118,21 @@ public class MainActivity extends AppCompatActivity  {
                     userLocationsToSaveBuilder.append(l.serialize()).append("\t");
                 }
                 dbHelper.updateUserLocation(userName,userLocationsToSaveBuilder.toString());
-                Toast.makeText(getBaseContext(), "The location list is saved!", Toast.LENGTH_SHORT).show();
+
+                //save the location list to AWS RDS
+                AwsDatabaseUpdate awsDatabaseUpdate = new AwsDatabaseUpdate(userName, userLocationsToSaveBuilder.toString());
+                awsDatabaseUpdate.setDelegate(MainActivity.this);
+                awsDatabaseUpdate.execute();
             }
         });
 
 
+    }
+
+    private void initLocationDataFromAws() {
+        adb = new AwsDatabaseQuery();
+        adb.setDelegate(this);
+        adb.execute(userName);
     }
 
     /**
@@ -141,6 +154,9 @@ public class MainActivity extends AppCompatActivity  {
                 locationsRec.add(new UserSelectedLocation(s));
             }
         }
+        adapter.setUserSelectedLocations(locationsRec);
+        locationRecView.setAdapter(adapter);
+        locationRecView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     /**
@@ -158,9 +174,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //Logout from Main page. will jump to login page
-        //And save the location list to the database when logging out
         int id = item.getItemId();
-        //save current location list to the database, convert location names to a string, split by \t
         if (id == R.id.logoutItem) {
             //TODO: notify the user if she has not saved the list
             //jump to user login page
@@ -180,5 +194,25 @@ public class MainActivity extends AppCompatActivity  {
     protected void onDestroy() {
         super.onDestroy();
         dbHelper.close();
+    }
+
+    @Override
+    public void processFinish(String output) {
+        String locationFromAWS = output;
+        if(locationFromAWS.length()>0) {
+            String[] locationTemp = locationFromAWS.split("\t");
+            for (String s : locationTemp) {
+                locationsRec.add(new UserSelectedLocation(s));
+            }
+        }
+        adapter.setUserSelectedLocations(locationsRec);
+        locationRecView.setAdapter(adapter);
+        locationRecView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    public void processUpdated(boolean b) {
+        if(b) Toast.makeText(getBaseContext(), "The location list is saved!", Toast.LENGTH_SHORT).show();
+        else Toast.makeText(getBaseContext(), "Something wrong!", Toast.LENGTH_SHORT).show();
     }
 }
