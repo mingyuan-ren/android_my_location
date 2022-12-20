@@ -148,16 +148,13 @@ public class ShowWeatherActivity extends AppCompatActivity {
                         }
                     }
                 });
-                Log.e("onResponse",""+response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(ShowWeatherActivity.this, "Error while loading weather details, please try again", Toast.LENGTH_SHORT).show();
-                Log.e("onErrorResponse", "" + error);
             }
         });
-        Log.e("jsObjRequest",  "" + weatherInfo);
 
         requestQueue.add(weatherInfo);
     }

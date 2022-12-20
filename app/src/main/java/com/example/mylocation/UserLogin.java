@@ -1,5 +1,7 @@
 package com.example.mylocation;
 
+import static com.applovin.sdk.AppLovinSdk.initializeSdk;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -43,7 +45,6 @@ public class UserLogin extends AppCompatActivity implements View.OnClickListener
         login_confirm.setOnClickListener(this);
         login_forget_password.setOnClickListener(this);
         login_register.setOnClickListener(this);
-
     }
 
     /**
