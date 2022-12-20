@@ -19,6 +19,12 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.applovin.mediation.MaxAd;
+import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxError;
+import com.applovin.mediation.ads.MaxAdView;
+import com.applovin.sdk.AppLovinSdk;
+import com.applovin.sdk.AppLovinSdkConfiguration;
 import com.example.mylocation.database.AwsDatabaseQuery;
 import com.example.mylocation.database.AwsDatabaseUpdate;
 import com.example.mylocation.database.UserDBHelper;
@@ -35,7 +41,7 @@ import java.util.Locale;
 /**
  * Main Activity to display user selected locations, add new locations and sign out
  */
-public class MainActivity extends AppCompatActivity implements AsyncResponse {
+public class MainActivity extends AppCompatActivity implements AsyncResponse, MaxAdViewAdListener {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -50,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     private LocationRecViewAdapter adapter = new LocationRecViewAdapter(this);
 
     private AwsDatabaseQuery adb;
+
+    private MaxAdView adView;
 
     /**
      * Default constructor to initialize the database helper
@@ -67,6 +75,19 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AppLovinSdk.getInstance(this).setMediationProvider("max");
+        AppLovinSdk.initializeSdk(this, new AppLovinSdk.SdkInitializationListener() {
+            @Override
+            public void onSdkInitialized(AppLovinSdkConfiguration config) {
+
+            }
+        });
+
+        adView = findViewById(R.id.banner_ad_view);
+        adView.setListener(this);
+        adView.loadAd();
+
 
         //initialize "add location" button, "location list" recycler view
         // and the userName which passed in by the UserLoginActivity
@@ -194,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     protected void onDestroy() {
         super.onDestroy();
         dbHelper.close();
+        adView.destroy();
     }
 
     @Override
@@ -214,5 +236,45 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     public void processUpdated(boolean b) {
         if(b) Toast.makeText(getBaseContext(), "The location list is saved!", Toast.LENGTH_SHORT).show();
         else Toast.makeText(getBaseContext(), "Something wrong!", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAdExpanded(MaxAd ad) {
+
+    }
+
+    @Override
+    public void onAdCollapsed(MaxAd ad) {
+
+    }
+
+    @Override
+    public void onAdLoaded(MaxAd ad) {
+
+    }
+
+    @Override
+    public void onAdDisplayed(MaxAd ad) {
+
+    }
+
+    @Override
+    public void onAdHidden(MaxAd ad) {
+
+    }
+
+    @Override
+    public void onAdClicked(MaxAd ad) {
+
+    }
+
+    @Override
+    public void onAdLoadFailed(String adUnitId, MaxError error) {
+
+    }
+
+    @Override
+    public void onAdDisplayFailed(MaxAd ad, MaxError error) {
+
     }
 }
